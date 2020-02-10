@@ -16,7 +16,12 @@ Int=${MathBright%%"."*}0
 
 [[ "$Int" -ge 1  ]] && MathBright=1      # Can't go over 1
 
+Gamma=""
+currenttime=$(date +%H:%M)
+if [[ "$currenttime" > "20:00" ]] || [[ "$currenttime" < "09:00" ]]; then
+   Gamma="--gamma 1.1:0.82854786:0.64816570"
+fi
 
-xrandr --output "$MON" --brightness "$MathBright"   # Set new brightness
+xrandr --output "$MON" $Gamma --brightness "$MathBright"   # Set new brightness
 
 echo "$CurrBright" > ~/scripts/brightness
