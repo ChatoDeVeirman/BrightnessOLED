@@ -1,0 +1,22 @@
+#!/bin/bash
+
+MON=$(xrandr | grep " connected" | cut -f1 -d" ")    # Discover monitor name with: xrandr | grep " connected"
+STEP="0.05"       # Step Up/Down brightnes by: ".05", ".10", etc.
+
+CurrBright=$( xrandr --verbose --current | grep ^"$MON" -A5 | tail -n1 )
+CurrBright="${CurrBright##* }"  # Get brightness level with decimal place
+
+MathBright="0"
+
+[[ "$1" == "Up" || "$1" == "+" ]] && MathBright=$(echo "$CurrBright + $STEP" | bc -l)
+[[ "$1" == "Down" || "$1" == "-" ]] && MathBright=$(echo "$CurrBright - $STEP" | bc -l)
+[[ "${MathBright:0:1}" == "-" ]] && MathBright=0    # Negative not allowed
+
+Int=${MathBright%%"."*}0
+
+[[ "$Int" -ge 1  ]] && MathBright=1      # Can't go over 1
+
+
+xrandr --output "$MON" --brightness "$MathBright"   # Set new brightness
+
+echo "$CurrBright" > ~/scripts/brightness
